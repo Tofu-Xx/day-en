@@ -1,0 +1,101 @@
+<head>
+  <meta charset="UTF-8">
+  <title>每日英语</title>
+  <script src="https://unpkg.com/setupin"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/@tofukit/resetcss">
+</head>
+
+<script setup>
+  const img = reactive({
+    blur: 0,
+    size: 1,
+    loading: false,
+    src: './ctrl-z.gif',
+  });
+  const getWp = async () => {
+    if (img.loading) return;
+    Object.assign(img, {
+      loading: true,
+      blur: 10,
+      size: 1.1,
+    });
+    img.src = URL.createObjectURL(await (await fetch('https://picsum.photos/3840/2160')).blob());
+    Object.assign(img, {
+      blur: 0,
+      size: 1,
+      loading: false,
+    });
+  };
+  const wpLoaded = () => {
+    URL.revokeObjectURL(img.src);
+  };
+  const data = ref({
+    // en: 'Don\'t put all your eggs in one basket.',
+    // zh: '不要孤注一掷',
+  });
+  const getEn = async () => {
+    data.value = (await (await fetch('https://api.vvhan.com/api/dailyEnglish?type=sj')).json()).data;
+  };
+  onMounted(() => {
+    getWp();
+    getEn();
+    setInterval(async () => await getWp(), 1000 * 60 * 60 * 2);
+  });
+</script>
+
+<template>
+  <img :src="img.src" @load="wpLoaded" @contextmenu.prevent="getWp" :style="{
+    filter: `blur(${img.blur}px)`,
+    transform: `scale(${img.size})`,
+  }">
+  <div @contextmenu.prevent="getEn">
+    <p style="font-family: 'Exo 2';">{{ data.en }}</p>
+    <p style="font-family: SimSun;">{{ data.zh }}</p>
+  </div>
+</template>
+
+<style>
+  body {
+    overflow: hidden;
+
+    img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      transition: all 1s;
+    }
+
+    div {
+      display: grid;
+      place-items: center;
+      gap: 10px;
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: fit-content;
+      height: fit-content;
+      padding: 10px;
+      border-radius: 4px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -40px;
+        backdrop-filter: blur(8px);
+        mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+      }
+
+      p {
+        text-align: center;
+        line-height: 1;
+        color: white;
+        filter: drop-shadow(0px 0px 10px #0006);
+        margin: 0;
+        width: max-content;
+        max-width: 80vw;
+        font-size: 1.5rem;
+      }
+    }
+  }
+</style>
