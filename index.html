@@ -6,6 +6,7 @@
   <script src="https://unpkg.com/style-plus@latest"></script>
   <link rel="stylesheet" href="https://unpkg.com/@tofukit/resetcss">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300&display=swap">
+  <!-- <script src="https://cdn.jsdelivr.net/npm/kursor"></script> -->
 </head>
 
 <script setup>
@@ -43,6 +44,12 @@
     getWp();
     getEn();
     setInterval(async () => await getWp(), 1000 * 60 * 60 * 2);
+
+    // new kursor({
+    //   type: 4,
+    //   removeDefaultCursor: true,
+    //   color: '#fab'
+    // });
   });
 </script>
 
@@ -88,6 +95,7 @@
 <style>
   body {
     overflow: hidden;
+
     img {
       width: 100vw;
       height: 100vh;
